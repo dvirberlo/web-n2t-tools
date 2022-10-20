@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "dsznajder.es7-react-js-snippets",
+    "github.copilot",
+    "eamodio.gitlens",
+    "visualstudioexptteam.vscodeintellicode",
+    "visualstudioexptteam.intellicode-api-usage-examples",
+    "yzhang.markdown-all-in-one",
+    "fabiospampinato.vscode-todo-plus",
+    "esbenp.prettier-vscode",
+    "aaron-bond.better-comments",
+    "wix.glean"
+  ]
+}

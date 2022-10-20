@@ -1,0 +1,34 @@
+# RoadMap
+
+- [x] General
+  - [x] structure
+- [ ] backend
+  - [ ] structure
+  - [ ] hdl
+    - [ ] parse
+    - [ ] chips
+    - [ ] bits
+    - [ ] tester
+  - [ ] asm
+    - [x] parser (can be better)
+    - [x] comparer
+    - [ ] tester
+  - [ ] vm
+    - [ ] parser
+    - (will use asm tester, I think)
+  - [ ] xml
+    - [ ] comparer
+  - [ ] jack
+    - [ ] parser
+    - [ ] os
+    - (will user vm->asm tester, I think)
+- [ ] frontend
+  - [x] structure
+  - [ ] webscoket
+  - [ ] ui
+    - [ ] hdl tester
+    - [ ] asm tester
+    - [ ] asm comparer
+    - [ ] vm tester
+    - [ ] xml comparer
+    - [ ] jack tester
