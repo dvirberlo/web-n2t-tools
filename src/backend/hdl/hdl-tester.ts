@@ -1,7 +1,30 @@
 // ? I think the error system here is fine, but it could be improved
 
 import { lineReader } from '../files/file-lines-reader';
-import { getFile } from '../files/files';
+import { getDir, getFile, getFileAndDir } from '../files/files';
+import { HdlFile } from './hdl-files';
+
+export async function hdlTest(
+  dirHandler: FileSystemDirectoryHandle,
+  hdl: HdlFile,
+  inGates: { [name: string]: number },
+  multiFile: boolean = true
+): Promise<{ [key: string]: number }> {
+  try {
+    const [hdlFile, hdlDir] = await getFileAndDir(dirHandler, hdl.path);
+    return await _hdlTest(
+      hdlDir,
+      hdlFile.name.slice(0, -4),
+      inGates,
+      multiFile
+    );
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'NotFoundError') {
+      throw `Could not read file: ${e.message}`;
+    }
+    throw e;
+  }
+}
 
 class CommentsDumper {
   constructor(private _insideComment: boolean = false, public lineCount = 0) {}
@@ -70,7 +93,7 @@ class Chip {
  * @param multiFile Should search for chips in other files in the hdlDir
  * @returns The output gates
  */
-export async function hdlTest(
+async function _hdlTest(
   hdlDir: FileSystemDirectoryHandle,
   hdlName: string,
   inGates: { [name: string]: number },
@@ -92,7 +115,7 @@ export async function hdlTest(
       new CommentsDumper()
     );
     chip.run = async (inGates, chip) => {
-      return await hdlTest(hdlDir, name, inGates, false);
+      return await _hdlTest(hdlDir, name, inGates, false);
     };
     return chip;
   });

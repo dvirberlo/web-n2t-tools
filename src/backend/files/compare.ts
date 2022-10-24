@@ -1,11 +1,12 @@
 import { zip } from '../common';
 
+// ! trims the matching blocks to remove any common prefix or suffix
 export async function* simpleLineCompare(
   ...lineReaders: AsyncGenerator<string, void, unknown>[]
 ): AsyncGenerator<boolean, void, unknown> {
   for await (const lines of zip<string>(lineReaders, false)) {
-    const line = lines[0];
-    if (lines.some((l) => l !== line)) {
+    const line = lines[0].trim();
+    if (lines.some((l) => l.trim() !== line)) {
       yield false;
     }
     yield true;
