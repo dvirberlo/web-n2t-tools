@@ -6,7 +6,7 @@
   - [ ] structure
   - [ ] hdl
     - [ ] parse
-    - [ ] chips
+    - [x] chips
     - [ ] bits
     - [ ] tester
   - [ ] asm
@@ -21,10 +21,9 @@
   - [ ] jack
     - [ ] parser
     - [ ] os
-    - (will user vm->asm tester, I think)
+    - (will use vm->asm tester, I think)
 - [ ] frontend
   - [x] structure
-  - [ ] webscoket
   - [ ] ui
     - [ ] hdl tester
     - [ ] asm tester
