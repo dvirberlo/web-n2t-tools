@@ -1,8 +1,7 @@
-import { simpleLineCompare } from '../files/compare';
-import { lineReader } from '../files/file-lines-reader';
-import { getFile } from '../files/files';
+import { simpleLineCompare } from '../compare';
 import { AsmCmpFile } from './asm-cmp-files';
 import { asmParse } from './assembler';
+import { FileService } from '../../services/file-service';
 
 /**
  * Compares the output of the assembler with the expected output
@@ -11,12 +10,10 @@ import { asmParse } from './assembler';
  * @returns array of lines that are different
  */
 export async function fullCompareAsmFile(
-  dirHandler: FileSystemDirectoryHandle,
   asmFile: AsmCmpFile
 ): Promise<number[]> {
-  const compiledFile = await getFile(dirHandler, asmFile.path);
-  const idealReader = asmParse(() => lineReader(compiledFile));
-  const actualReader = lineReader(await getFile(dirHandler, asmFile.compare));
+  const idealReader = asmParse(() => FileService.getLineReader(asmFile.path));
+  const actualReader = FileService.getLineReader(asmFile.compare);
   const lines: number[] = [];
   let line = 0;
   for await (const areEqual of simpleLineCompare(idealReader, actualReader)) {
@@ -32,13 +29,9 @@ export async function fullCompareAsmFile(
  * @param asmFile the asm file to compile and compare
  * @returns the first line that is different
  */
-export async function compareAsmFile(
-  dirHandler: FileSystemDirectoryHandle,
-  asmFile: AsmCmpFile
-): Promise<number> {
-  const compiledFile = await getFile(dirHandler, asmFile.path);
-  const idealReader = asmParse(() => lineReader(compiledFile));
-  const actualReader = lineReader(await getFile(dirHandler, asmFile.path));
+export async function compareAsmFile(asmFile: AsmCmpFile): Promise<number> {
+  const idealReader = asmParse(() => FileService.getLineReader(asmFile.path));
+  const actualReader = FileService.getLineReader(asmFile.compare);
   let line = 0;
   for await (const areEqual of simpleLineCompare(idealReader, actualReader)) {
     line++;

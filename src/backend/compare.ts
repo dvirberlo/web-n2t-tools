@@ -1,4 +1,4 @@
-import { zip } from '../common';
+import { zip } from './common';
 
 // ! trims the matching blocks to remove any common prefix or suffix
 export async function* simpleLineCompare(

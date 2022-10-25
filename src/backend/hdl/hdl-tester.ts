@@ -1,17 +1,15 @@
 // ? I think the error system here is fine, but it could be improved
 
-import { lineReader } from '../files/file-lines-reader';
-import { getDir, getFile, getFileAndDir } from '../files/files';
 import { HdlFile } from './hdl-files';
+import { FileService } from '../../services/file-service';
 
 export async function hdlTest(
-  dirHandler: FileSystemDirectoryHandle,
   hdl: HdlFile,
   inGates: { [name: string]: number },
   multiFile: boolean = true
 ): Promise<{ [key: string]: number }> {
   try {
-    const [hdlFile, hdlDir] = await getFileAndDir(dirHandler, hdl.path);
+    const [hdlFile, hdlDir] = await FileService.getFileAndDir(hdl.path);
     return await _hdlTest(
       hdlDir,
       hdlFile.name.slice(0, -4),
@@ -101,7 +99,7 @@ async function _hdlTest(
 ): Promise<{ [key: string]: number }> {
   let lines;
   try {
-    lines = lineReader(await getFile(hdlDir, `${hdlName}.hdl`));
+    lines = FileService.getLineReader(`${hdlName}.hdl`);
   } catch (e) {
     throw `Could not read file: ${hdlName}.hdl`;
   }
@@ -111,7 +109,7 @@ async function _hdlTest(
     const chipFile = await hdlDir.getFileHandle(`${name}.hdl`);
     if (!chipFile) return undefined;
     const chip = await _getChipDetails(
-      lineReader(await chipFile.getFile()),
+      FileService.getLineReader(`${name}.hdl`),
       new CommentsDumper()
     );
     chip.run = async (inGates, chip) => {

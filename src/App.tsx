@@ -11,13 +11,15 @@ import {
   Paper,
   SwipeableDrawer,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/menuRounded';
-import CloseIcon from '@mui/icons-material/closeRounded';
-import HomeIcon from '@mui/icons-material/homeRounded';
+import MenuIcon from '@mui/icons-material/MenuRounded';
+import CloseIcon from '@mui/icons-material/CloseRounded';
+import HomeIcon from '@mui/icons-material/HomeRounded';
 import InfoIcon from '@mui/icons-material/InfoRounded';
 
 import './App.css';
 import React from 'react';
+
+import { FileService } from './services/file-service';
 
 const theme = createTheme({
   palette: {
@@ -122,13 +124,6 @@ export default function App() {
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
         />
-        {/* <NavLink to="/">Home</NavLink>
-        {' · '}
-        <NavLink to="/p01">P01/2 hdl tester</NavLink>
-        {' · '}
-        <NavLink to="/p06">P06 assembler</NavLink>
-        {' · '}
-        <NavLink to="/foo">foo (404)</NavLink> */}
         <Outlet />
       </Paper>
     </ThemeProvider>

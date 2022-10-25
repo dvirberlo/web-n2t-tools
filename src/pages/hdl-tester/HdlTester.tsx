@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import React, { useState } from 'react';
 import { HDL_PROJECTS } from '../../backend/hdl/hdl-files';
 import { hdlTest } from '../../backend/hdl/hdl-tester';
+import { FileService } from '../../services/file-service';
 
 export default function HdlTester() {
   const [selectProject, setSelectProject] = useState<number>(0);
@@ -69,9 +70,6 @@ export default function HdlTester() {
 
         <Button
           onClick={async () => {
-            const dirHandler: FileSystemDirectoryHandle = await (
-              window as any
-            )?.showDirectoryPicker();
             const input = {
               in: 5,
               a: 11,
@@ -94,7 +92,6 @@ export default function HdlTester() {
             };
             console.log('input', input);
             const output = hdlTest(
-              dirHandler,
               HDL_PROJECTS[selectProject].files[selectedFile],
               input
             )

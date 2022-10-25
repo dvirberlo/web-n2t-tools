@@ -11,6 +11,7 @@ import { Box } from '@mui/system';
 import React from 'react';
 import { fullCompareAsmFile } from '../../backend/asm/asm-comparer';
 import { ASM_CMP_FILES } from '../../backend/asm/asm-cmp-files';
+import { FileService } from '../../services/file-service';
 
 export default function AsmComparer() {
   const [asmFile, setAsmFile] = React.useState<number>(0);
@@ -42,11 +43,7 @@ export default function AsmComparer() {
             <Button
               startIcon={<BoltIcon />}
               onClick={async () => {
-                const dirHandler: FileSystemDirectoryHandle = await (
-                  window as any
-                )?.showDirectoryPicker();
                 const wrongLines = await fullCompareAsmFile(
-                  dirHandler,
                   ASM_CMP_FILES[asmFile]
                 );
                 console.log('wrongs lines', wrongLines);
