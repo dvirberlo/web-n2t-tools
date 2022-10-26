@@ -78,4 +78,29 @@ export namespace FileService {
       yield buffer;
     }
   }
+  export async function* getLineReaderInside(
+    filePath: string,
+    dir: FileSystemDirectoryHandle
+  ): AsyncGenerator<string, void, unknown> {
+    const file = await dir.getFileHandle(filePath);
+    const reader = (await file.getFile()).stream().getReader();
+    let decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        yield line;
+      }
+    }
+    if (buffer.length > 0) {
+      yield buffer;
+    }
+  }
 }

@@ -1,7 +1,7 @@
 // ? I think the error system here is fine, but it could be improved
 
-import { HdlFile } from './hdl-files';
 import { FileService } from '../../services/file-service';
+import { HdlFile } from './hdl-files';
 
 export async function hdlTest(
   hdl: HdlFile,
@@ -99,7 +99,7 @@ async function _hdlTest(
 ): Promise<{ [key: string]: number }> {
   let lines;
   try {
-    lines = FileService.getLineReader(`${hdlName}.hdl`);
+    lines = FileService.getLineReaderInside(`${hdlName}.hdl`, hdlDir);
   } catch (e) {
     throw `Could not read file: ${hdlName}.hdl`;
   }
@@ -109,7 +109,7 @@ async function _hdlTest(
     const chipFile = await hdlDir.getFileHandle(`${name}.hdl`);
     if (!chipFile) return undefined;
     const chip = await _getChipDetails(
-      FileService.getLineReader(`${name}.hdl`),
+      FileService.getLineReaderInside(`${name}.hdl`, hdlDir),
       new CommentsDumper()
     );
     chip.run = async (inGates, chip) => {
@@ -149,7 +149,11 @@ async function hdlTestFile(
       )
     );
   } catch (e) {
-    throw `Error in line ${commentsDumper.lineCount}:\n${e}`;
+    throw (
+      (commentsDumper.lineCount > 0
+        ? `Error in line ${commentsDumper.lineCount}:\n`
+        : '') + `${e}`
+    );
   }
 }
 

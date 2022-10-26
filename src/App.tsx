@@ -1,5 +1,13 @@
-import { Outlet, useNavigate } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import XmlIcon from '@mui/icons-material/AccountTreeRounded';
+import CloseIcon from '@mui/icons-material/CloseRounded';
+import VmIcon from '@mui/icons-material/CodeRounded';
+import JackIcon from '@mui/icons-material/DataObjectRounded';
+import AsmCompareIcon from '@mui/icons-material/FactCheckRounded';
+import HomeIcon from '@mui/icons-material/HomeRounded';
+import InfoIcon from '@mui/icons-material/InfoRounded';
+import HdlIcon from '@mui/icons-material/MemoryRounded';
+import MenuIcon from '@mui/icons-material/MenuRounded';
+import AsmIcon from '@mui/icons-material/PrecisionManufacturingRounded';
 import {
   Box,
   Fab,
@@ -11,29 +19,14 @@ import {
   Paper,
   SwipeableDrawer,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/MenuRounded';
-import CloseIcon from '@mui/icons-material/CloseRounded';
-import HomeIcon from '@mui/icons-material/HomeRounded';
-import InfoIcon from '@mui/icons-material/InfoRounded';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Outlet, useNavigate } from 'react-router-dom';
 
-import './App.css';
 import React from 'react';
-
-import { FileService } from './services/file-service';
 
 const theme = createTheme({
   palette: {
     mode: 'dark',
-    // primary: {
-    //   main: '#f92672',
-    // },
-    // secondary: {
-    //   main: '#66d9ef',
-    // },
-    // background: {
-    //   default: '#272822',
-    //   paper: '#272822',
-    // },
   },
 });
 
@@ -50,18 +43,38 @@ const menuItems: {
   {
     label: 'HDL Tester',
     path: '/hdl-tester',
-    icon: <InfoIcon />,
+    icon: <HdlIcon />,
   },
   {
     label: 'ASM Comparer',
     path: '/asm-comparer',
+    icon: <AsmCompareIcon />,
+  },
+  {
+    label: 'ASM Tester',
+    path: '/asm-tester',
+    icon: <AsmIcon />,
+  },
+  {
+    label: 'VM Tree Comparer',
+    path: '/vm-xml-comparer',
+    icon: <XmlIcon />,
+  },
+  {
+    label: 'VM Tester',
+    path: '/vm-tester',
+    icon: <VmIcon />,
+  },
+  {
+    label: 'Jack Tester',
+    path: '/jack-tester',
+    icon: <JackIcon />,
+  },
+  {
+    label: 'About',
+    path: '/about',
     icon: <InfoIcon />,
   },
-  // {
-  //   label: 'About',
-  //   path: '/about',
-  //   icon: <InfoIcon />,
-  // },
 ];
 
 export default function App() {
@@ -72,59 +85,62 @@ export default function App() {
       <Paper
         elevation={0}
         style={{
-          minHeight: '100vh',
-          minWidth: '100vw',
+          height: '100vh',
+          width: '100vw',
           padding: 0,
           margin: 0,
           borderRadius: 0,
+          overflow: 'hidden',
         }}
       >
-        <SwipeableDrawer
-          sx={{
-            zIndex: 100,
-          }}
-          anchor="left"
-          open={isMenuOpen}
-          onClose={() => setIsMenuOpen(false)}
-          onOpen={() => setIsMenuOpen(true)}
-        >
-          <Box
+        <div style={{ overflowY: 'auto', height: '100vh' }}>
+          <SwipeableDrawer
             sx={{
-              width: 250,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
+              zIndex: 100,
             }}
+            anchor="left"
+            open={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+            onOpen={() => setIsMenuOpen(true)}
           >
-            <List>
-              {menuItems.map((item) => (
-                <ListItem
-                  key={item.label}
-                  disablePadding
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    navigate(item.path);
-                  }}
-                  sx={{
-                    '&.Mui-selected': {
-                      backgroundColor: 'primary.main',
-                    },
-                  }}
-                >
-                  <ListItemButton>
-                    {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
-                    <ListItemText primary={item.label} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </SwipeableDrawer>
-        <MenuFloatingButton
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-        />
-        <Outlet />
+            <Box
+              sx={{
+                width: 250,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <List>
+                {menuItems.map((item) => (
+                  <ListItem
+                    key={item.label}
+                    disablePadding
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate(item.path);
+                    }}
+                    sx={{
+                      '&.Mui-selected': {
+                        backgroundColor: 'primary.main',
+                      },
+                    }}
+                  >
+                    <ListItemButton>
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText primary={item.label} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          </SwipeableDrawer>
+          <MenuFloatingButton
+            isMenuOpen={isMenuOpen}
+            setIsMenuOpen={setIsMenuOpen}
+          />
+          <Outlet />
+        </div>
       </Paper>
     </ThemeProvider>
   );

@@ -60,7 +60,7 @@ class SymbolTable {
 
 export async function* asmParse(
   getLineReader: () => AsyncGenerator<string, void, unknown>
-): AsyncGenerator<string, void, unknown> {
+): AsyncGenerator<[string, string], void, unknown> {
   // it is actually reading the file twice, so if the file is changed in between it will be a problem
   // TODO maybe there is a way to lock the file from being changed while reading it
   const symbolTable = await asmLabels(await getLineReader());
@@ -70,7 +70,7 @@ export async function* asmParse(
     // TODO right now it is skipping empty/labels lines, but maybe it should yield an empty line
     if (line.length === 0 || line.startsWith('(')) continue;
     if (line.startsWith('@')) {
-      yield `0${symbolTable.toBin(line.slice(1))}`;
+      yield [lineR, `0${symbolTable.toBin(line.slice(1))}`];
     } else {
       let comp = line,
         dest = '',
@@ -80,13 +80,16 @@ export async function* asmParse(
       } else if (line.includes(';')) {
         [comp, jump] = line.split(';');
       }
-      yield '111' +
-        binBool(comp.includes('M')) +
-        compTable[comp.trim().replace('M', 'A')] +
-        binBool(dest.includes('A')) +
-        binBool(dest.includes('D')) +
-        binBool(dest.includes('M')) +
-        jumpTable[jump.trim()];
+      yield [
+        lineR,
+        '111' +
+          binBool(comp.includes('M')) +
+          compTable[comp.trim().replace('M', 'A')] +
+          binBool(dest.includes('A')) +
+          binBool(dest.includes('D')) +
+          binBool(dest.includes('M')) +
+          jumpTable[jump.trim()],
+      ];
     }
   }
 }
