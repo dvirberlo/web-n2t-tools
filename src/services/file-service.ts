@@ -29,61 +29,55 @@ export namespace FileService {
   }
 
   export async function getDir(
-    dirPath: string
+    dirPath: string,
+    dir: FileSystemDirectoryHandle | undefined = undefined
   ): Promise<FileSystemDirectoryHandle> {
     const parts = dirPath.split('/');
     if (parts[0] === '.' || parts[0] === '') parts.shift();
-    let fileHandle = await $fs();
+    let fileHandle = dir || (await $fs());
     for (const part of parts) {
       fileHandle = await fileHandle.getDirectoryHandle(part);
     }
     return fileHandle;
   }
 
-  export async function getFileAndDir(
-    filePath: string
-  ): Promise<[File, FileSystemDirectoryHandle]> {
+  export async function getDirAndFile(
+    filePath: string,
+    dir: FileSystemDirectoryHandle | undefined = undefined
+  ): Promise<[FileSystemDirectoryHandle, File, string, string]> {
     const parts = filePath.split('/');
     const filename = parts.pop();
-    const dir = await getDir(parts.join('/'));
-    return [await (await dir.getFileHandle(filename || '')).getFile(), dir];
+    const dirHandle = await getDir(parts.join('/'), dir);
+    return [
+      dirHandle,
+      await (await dirHandle.getFileHandle(filename || '')).getFile(),
+      parts.join('/'),
+      filename || '',
+    ];
   }
 
-  export async function getFile(filePath: string): Promise<File> {
-    const [file] = await getFileAndDir(filePath);
+  export async function getFile(
+    filePath: string,
+    dir: FileSystemDirectoryHandle | undefined = undefined
+  ): Promise<File> {
+    const [_, file] = await getDirAndFile(filePath, dir);
     return file;
   }
 
-  export async function* getLineReader(
-    filePath: string
-  ): AsyncGenerator<string, void, unknown> {
-    const file = await getFile(filePath);
-    const reader = file.stream().getReader();
-    let decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-      for (const line of lines) {
-        yield line;
-      }
-    }
-    if (buffer.length > 0) {
-      yield buffer;
-    }
-  }
-  export async function* getLineReaderInside(
+  export async function getText(
     filePath: string,
-    dir: FileSystemDirectoryHandle
+    dir: FileSystemDirectoryHandle | undefined = undefined
+  ) {
+    const file = await getFile(filePath, dir);
+    return await file.text();
+  }
+
+  export async function* getLineReader(
+    filePath: string,
+    dir: FileSystemDirectoryHandle | undefined = undefined
   ): AsyncGenerator<string, void, unknown> {
-    const file = await dir.getFileHandle(filePath);
-    const reader = (await file.getFile()).stream().getReader();
+    const file = await getFile(filePath, dir);
+    const reader = file.stream().getReader();
     let decoder = new TextDecoder();
     let buffer = '';
 

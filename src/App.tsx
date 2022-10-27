@@ -1,7 +1,7 @@
 import XmlIcon from '@mui/icons-material/AccountTreeRounded';
 import CloseIcon from '@mui/icons-material/CloseRounded';
-import VmIcon from '@mui/icons-material/CodeRounded';
-import JackIcon from '@mui/icons-material/DataObjectRounded';
+// import VmIcon from '@mui/icons-material/CodeRounded';
+// import JackIcon from '@mui/icons-material/DataObjectRounded';
 import AsmCompareIcon from '@mui/icons-material/FactCheckRounded';
 import HomeIcon from '@mui/icons-material/HomeRounded';
 import InfoIcon from '@mui/icons-material/InfoRounded';
@@ -60,16 +60,16 @@ const menuItems: {
     path: '/vm-xml-comparer',
     icon: <XmlIcon />,
   },
-  {
-    label: 'VM Tester',
-    path: '/vm-tester',
-    icon: <VmIcon />,
-  },
-  {
-    label: 'Jack Tester',
-    path: '/jack-tester',
-    icon: <JackIcon />,
-  },
+  // {
+  //   label: 'VM Tester',
+  //   path: '/vm-tester',
+  //   icon: <VmIcon />,
+  // },
+  // {
+  //   label: 'Jack Tester',
+  //   path: '/jack-tester',
+  //   icon: <JackIcon />,
+  // },
   {
     label: 'About',
     path: '/about',

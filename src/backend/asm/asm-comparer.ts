@@ -1,6 +1,5 @@
 import { FileService } from '../../services/file-service';
-import { zip2 } from '../common';
-import { simpleLineCompare } from '../compare';
+import { zip2 } from '../common/common';
 import { AsmCmpFile } from './asm-cmp-files';
 import { asmParse } from './assembler';
 

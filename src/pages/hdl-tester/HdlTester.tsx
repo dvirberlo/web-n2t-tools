@@ -9,9 +9,11 @@ import {
 import TextField from '@mui/material/TextField';
 import React, { useState } from 'react';
 import { HDL_PROJECTS } from '../../backend/hdl/hdl-files';
-import { hdlTest } from '../../backend/hdl/hdl-tester';
+import { HdlRunner } from '../../backend/hdl/hdl-runner';
 import AccordionComponent from '../../components/accordion-component/AccordionComponent';
 import AppBarComponent from '../../components/app-bar-component/AppBarComponent';
+
+import { testFile } from '../../backend/hdl/hdl-tester';
 
 export default function HdlTester() {
   const [selectProject, setSelectProject] = useState<number>(0);
@@ -59,13 +61,14 @@ export default function HdlTester() {
             </TextField>
           </FormControl>
 
-          <Button onClick={hdlTestClick(selectProject, selectedFile)}>
+          <Button onClick={() => hdlTestClick(selectProject, selectedFile)}>
             Test Chip
           </Button>
         </div>
       </AppBarComponent>
 
       <Container
+        maxWidth="xl"
         style={{
           paddingInline: '3px',
           display: 'flex',
@@ -81,10 +84,10 @@ export default function HdlTester() {
           defaultExpanded={true}
           icon={<OutputIcon />}
         >
-          {' '}
-          <Typography id="test-results" style={{ whiteSpace: 'pre-wrap' }}>
-            Click 'Test Chip' to see the results
-          </Typography>
+          <OutputText
+            id="test-results"
+            text={"Click 'Test Chip' to see the results"}
+          />
         </AccordionComponent>
 
         <AccordionComponent
@@ -92,73 +95,51 @@ export default function HdlTester() {
           defaultExpanded={true}
           icon={<OutputIcon />}
         >
-          {' '}
-          <Typography
+          <OutputText
             id="expected-test-results"
-            style={{ whiteSpace: 'pre-wrap' }}
-          >
-            Click 'Test Chip' to see the output
-          </Typography>
+            text={"Click 'Test Chip' to see the results"}
+          />
         </AccordionComponent>
 
         <AccordionComponent
           title="Test Instructions"
-          defaultExpanded={true}
+          defaultExpanded={false}
           icon={<OutputIcon />}
         >
-          {' '}
-          <Typography id="test-instructions" style={{ whiteSpace: 'pre-wrap' }}>
-            Click 'Test Chip' to see the results
-          </Typography>
+          <OutputText
+            id="test-instructions"
+            text={"Click 'Test Chip' to see the results"}
+          />
         </AccordionComponent>
       </Container>
     </>
   );
 }
-function hdlTestClick(
+async function hdlTestClick(
   selectProject: number,
   selectedFile: number
-): React.MouseEventHandler<HTMLButtonElement> | undefined {
-  return async () => {
-    const input = {
-      in: 5,
-      a: 11,
-      b: 12,
-      c: 13,
-      d: 14,
-      e: 15,
-      f: 1,
-      g: 71,
-      h: 18,
-      sel: 6,
-      x: 16,
-      y: 55,
-      zx: 0,
-      nx: 0,
-      zy: 0,
-      ny: 0,
+): Promise<void> {
+  testFile(HDL_PROJECTS[selectProject].files[selectedFile].testPath).then(
+    (result) => {
+      console.log(result);
+      const testElem = window.document.querySelector('#test-instructions');
+      const expectedElem = window.document.querySelector(
+        '#expected-test-results'
+      );
+      const resultsElem = window.document.querySelector('#test-results');
+      if (!(testElem && expectedElem && resultsElem))
+        throw new Error('Output elements not found');
+      testElem.innerHTML = result.instructions;
+      expectedElem.innerHTML = result.expected;
+      resultsElem.innerHTML = result.output;
+    }
+  );
+}
 
-      no: 0,
-    };
-    console.log('input', input);
-    const testElem = window.document.querySelector('#test-instructions');
-    const expectedElem = window.document.querySelector(
-      '#expected-test-results'
-    );
-    const resultsElem = window.document.querySelector('#test-results');
-    if (!(testElem && expectedElem && resultsElem))
-      throw new Error('Output elements not found');
-    testElem.textContent = JSON.stringify(input, null, 2);
-    console.log(HDL_PROJECTS[selectProject].files[selectedFile]);
-    hdlTest(HDL_PROJECTS[selectProject].files[selectedFile], input)
-      .then((result) => {
-        for (const key in result)
-          console.log(result[key].toString(2).padStart(16, '0'), key);
-        console.log('output', result);
-        resultsElem.textContent = JSON.stringify(result, null, 2);
-      })
-      .catch((err) => {
-        console.log(`hdlTest error:\n${err}`);
-      });
-  };
+function OutputText(props: { id: string; text: string }) {
+  return (
+    <pre id={props.id} style={{ whiteSpace: 'break-spaces' }}>
+      {props.text}
+    </pre>
+  );
 }

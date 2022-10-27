@@ -21,7 +21,7 @@ export default function AccordionComponent(props: {
         flexGrow: 1,
         minWidth: '350px',
         maxWidth: '98%',
-        width: '45%',
+        width: '49%',
         margin: '2px',
       }}
     >
